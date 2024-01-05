@@ -1,0 +1,124 @@
+package avengers;
+/**
+ * 
+ * Using the Adjacency Matrix of n vertices and starting from Earth (vertex 0), 
+ * modify the edge weights using the functionality values of the vertices that each edge 
+ * connects, and then determine the minimum cost to reach Titan (vertex n-1) from Earth (vertex 0).
+ * 
+ * Steps to implement this class main method:
+ * 
+ * Step 1:
+ * LocateTitanInputFile name is passed through the command line as args[0]
+ * Read from LocateTitanInputFile with the format:
+ *    1. g (int): number of generators (vertices in the graph)
+ *    2. g lines, each with 2 values, (int) generator number, (double) funcionality value
+ *    3. g lines, each with g (int) edge values, referring to the energy cost to travel from 
+ *       one generator to another 
+ * Create an adjacency matrix for g generators.
+ * 
+ * Populate the adjacency matrix with edge values (the energy cost to travel from one 
+ * generator to another).
+ * 
+ * Step 2:
+ * Update the adjacency matrix to change EVERY edge weight (energy cost) by DIVIDING it 
+ * by the functionality of BOTH vertices (generators) that the edge points to. Then, 
+ * typecast this number to an integer (this is done to avoid precision errors). The result 
+ * is an adjacency matrix representing the TOTAL COSTS to travel from one generator to another.
+ * 
+ * Step 3:
+ * LocateTitanOutputFile name is passed through the command line as args[1]
+ * Use Dijkstra’s Algorithm to find the path of minimum cost between Earth and Titan. 
+ * Output this number into your output file!
+ * 
+ * Note: use the StdIn/StdOut libraries to read/write from/to file.
+ * 
+ *   To read from a file use StdIn:
+ *     StdIn.setFile(inputfilename);
+ *     StdIn.readInt();
+ *     StdIn.readDouble();
+ * 
+ *   To write to a file use StdOut (here, minCost represents the minimum cost to 
+ *   travel from Earth to Titan):
+ *     StdOut.setFile(outputfilename);
+ *     StdOut.print(minCost);
+ *  
+ * Compiling and executing:
+ *    1. Make sure you are in the ../InfinityWar directory
+ *    2. javac -d bin src/avengers/*.java
+ *    3. java -cp bin avengers/LocateTitan locatetitan.in locatetitan.out
+ * 
+ * @author Yashas Ravi
+ * 
+ */
+
+public class LocateTitan {
+	
+    public static void main (String [] args) {
+    	
+        if ( args.length < 2 ) {
+            StdOut.println("Execute: java LocateTitan <INput file> <OUTput file>");
+            return;
+        }
+
+    	// WRITE YOUR CODE HERE
+        StdIn.setFile(args[0]);
+        StdOut.setFile(args[1]);
+        int generator_number = StdIn.readInt();
+        int[][] next_edge_values = new int[generator_number][generator_number];
+        double[] function_values = new double[generator_number];
+        int[] generator_values = new int[generator_number];
+        for (int i = 0; i < generator_number; i++) {
+            generator_values[i] = StdIn.readInt();
+            function_values[i] = StdIn.readDouble();
+        }
+        for (int i = 0; i < generator_number; i++) {
+            for (int j = 0; j < generator_number; j++) {
+                next_edge_values[i][j] = (int) (StdIn.readInt()/(function_values[i]*function_values[j]));
+                int next=0;
+                int temp;
+                temp=next;
+            }
+        }
+        int[] lowest_cost_route = pseudo_dijkstra(next_edge_values);
+        StdOut.print(lowest_cost_route[generator_number - 1]);
+    }
+    //a = next_edge_alues for the new private method.
+    private static int[] pseudo_dijkstra (int[][] a) {
+        int[] repeat_low_cost = new int[a.length];
+        boolean[] data = new boolean[a.length];   
+        for (int i = 1; i < repeat_low_cost.length; i++){
+            repeat_low_cost[i] = Integer.MAX_VALUE;
+            int[] aa = new int[5];
+            aa[0]=0;
+            aa[1]=aa[0];
+        } 
+        for (int i = 0; i < repeat_low_cost.length; i++) {
+            int current = get_lowest_cost_node(repeat_low_cost, data);
+            data[current] = true;
+            boolean doom = true;
+            if (a[i][i]<0) {
+                doom=false;
+            }
+            for (int j = 0; j < a.length; j++) {
+                int total = repeat_low_cost[current] + a[current][j];
+                if (a[current][j] != 0 && !data[j] && total < repeat_low_cost[j]) {
+                    repeat_low_cost[j] = total;
+                    doom = false;
+                }
+            }
+        }
+        return repeat_low_cost;
+    }
+    //b = repeat_low_cost 
+    //c = data boolean array
+    private static int get_lowest_cost_node (int[] b, boolean[] c) {
+        int shortest = Integer.MAX_VALUE, min_node = -1;
+        for (int i = 0; i < b.length; i++) {
+            if (!c[i] && b[i] < shortest) {
+                shortest = b[i];
+                min_node = i;
+            }
+        }
+        return min_node;
+    }
+}
